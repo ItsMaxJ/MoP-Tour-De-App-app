@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TdA - School buffet</title>
+    <link rel="stylesheet" href="src/index.css" />
+  </head>
+  <body>
+    <h1>School Buffet</h1>
+
+    <form id="product-form">
+      <label>
+        Name
+        <input id="input-name" name="name" required />
+      </label>
+      <label>
+        Cost
+        <input id="input-cost" name="cost" type="number" required />
+      </label>
+      <button id="btn-submit" type="submit">Add</button>
+      <button id="btn-cancel" type="button" style="display:none">Zrušit</button>
+    </form>
+
+    <div id="product-list"></div>
+
+    <script src="src/api.js"></script>
+    <script src="src/ProductTable.js"></script>
+    <script src="src/ProductForm.js"></script>
+    <script src="src/App.js"></script>
+  </body>
+</html>

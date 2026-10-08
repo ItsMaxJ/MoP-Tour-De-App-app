@@ -1,0 +1,40 @@
+exposedPort: 80
+containers:
+  - name: web
+    image: registry.tourde.cloud/<slug>/web
+    port: 3000
+    env:
+      PORT: "3000"
+      VITE_API_URL: "/api"
+  - name: server
+    image: registry.tourde.cloud/<slug>/server
+    port: 3001
+    env:
+      FLASK_DB_HOST: 127.0.0.1
+      FLASK_DB_NAME: product
+      FLASK_DB_PASSWORD: "strongPassword?"
+      FLASK_DB_PORT: "3306"
+      FLASK_DB_USER: tda_user
+      PORT: "3001"
+  - name: mysql
+    image: mysql
+    tag: "8.4"
+    env:
+      MYSQL_DATABASE: product
+      MYSQL_ROOT_PASSWORD: password
+    port: 3306
+  - name: caddy
+    image: registry.tourde.cloud/<slug>/caddy
+    port: 80
+build:
+  - name: web
+    context: ./frontend
+    dockerfile: ./frontend/Dockerfile
+    args:
+      VITE_API_URL: "/api"
+  - name: server
+    context: ./backend
+    dockerfile: ./backend/docker/Dockerfile
+  - name: caddy
+    context: ./caddy
+    dockerfile: ./caddy/Dockerfile

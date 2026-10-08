@@ -1,0 +1,16 @@
+# All containers share localhost (one Kubernetes pod on Tour de Cloud,
+# network_mode: host in local compose). Reverse proxy only — TdC terminates TLS.
+{
+    servers {
+        # Keep TdC's X-Forwarded-Proto: https instead of overwriting it with http;
+        # SvelteKit's form-action CSRF check needs the real https origin.
+        trusted_proxies static private_ranges
+    }
+}
+
+:80 {
+    handle /api/* {
+        reverse_proxy localhost:3001
+    }
+    reverse_proxy * localhost:3000
+}

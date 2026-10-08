@@ -1,0 +1,99 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 32px;
+  background: #111;
+  color: #ccc;
+  min-height: 100vh;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 24px;
+  color: #eee;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+
+th, td {
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 1px solid #222;
+}
+
+th {
+  color: #888;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tr:hover {
+  background: #191919;
+}
+
+form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  align-items: flex-end;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #777;
+}
+
+input {
+  padding: 8px 10px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #ccc;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #555;
+}
+
+button {
+  padding: 8px 16px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button:hover {
+  background: #252525;
+  border-color: #444;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+p {
+  color: #555;
+  font-size: 14px;
+}
