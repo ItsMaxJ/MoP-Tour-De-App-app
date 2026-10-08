@@ -5,4 +5,4 @@ class App:
         self.app = app
         @app.get("/api/health")
         def health_check():
-            return jsonify('GET / musí vracet 200'), 200
+            return jsonify('200'), 200
