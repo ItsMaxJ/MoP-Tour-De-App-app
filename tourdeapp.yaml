@@ -17,7 +17,7 @@ containers:
       FLASK_DB_USER: tda_user
       PORT: "3001"
   - name: mysql
-    image: mysql
+    image: registry.tourde.cloud/mop/mysql
     tag: "8.4"
     env:
       MYSQL_DATABASE: product
