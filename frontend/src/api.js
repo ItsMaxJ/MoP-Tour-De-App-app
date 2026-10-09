@@ -33,3 +33,7 @@ async function deleteProduct(id) {
   });
   return res.json();
 }
+async function checkHealth() {
+  const res = await fetch(`${API_URL}/health`);
+  return res.json()
+}
