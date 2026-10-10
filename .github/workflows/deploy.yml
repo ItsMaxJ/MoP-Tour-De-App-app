@@ -1,4 +1,4 @@
-git name: Deploy to Tour de App
+name: Deploy to Tour de App
 
 on:
   push:
