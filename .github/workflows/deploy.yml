@@ -19,4 +19,3 @@ jobs:
         uses: studentscangrow/upload-app@v27
         with:
           tdc_token: ${{ secrets.TDC_TOKEN }}
-          debug: true

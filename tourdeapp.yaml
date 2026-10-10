@@ -12,7 +12,7 @@ containers:
     env:
       FLASK_DB_HOST: 127.0.0.1
       FLASK_DB_NAME: product
-      FLASK_DB_PASSWORD: "strongPassword?"
+      FLASK_DB_PASSWORD: ""
       FLASK_DB_PORT: "3306"
       FLASK_DB_USER: tda_user
       PORT: "3001"
