@@ -1,5 +1,7 @@
 -- init.sql
 CREATE DATABASE IF NOT EXISTS product;
+CREATE DATABASE if NOT EXISTS team;
 CREATE USER IF NOT EXISTS 'tda_user'@'%' IDENTIFIED BY 'strongPassword?';
 GRANT ALL PRIVILEGES ON product.* TO 'tda_user'@'%';
+GRANT ALL PRIVILEGES ON team.* TO 'tda_user'@'%';
 FLUSH PRIVILEGES;

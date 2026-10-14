@@ -1,10 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 
 from .config import Config
-from .datawork import get_message
 from .extensions import db
-from .routes import product_bp
+from .routes import product_bp, team_bp
 
 
 def create_app():
@@ -15,11 +14,8 @@ def create_app():
     # Allow a frontend dev server on another port (e.g. localhost:3000) to call the API.
     CORS(app)
 
-    @app.get("/api/datawork")
-    def datawork():
-        return jsonify({"message": get_message()}), 200
-
     app.register_blueprint(product_bp, url_prefix="/api/product")
+    app.register_blueprint(team_bp, url_prefix="/api/team")
 
     with app.app_context():
         db.create_all()
