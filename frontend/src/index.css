@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Dosis';
+  src: url('../Dosis-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,7 +14,7 @@
 body {
   font-family: system-ui, -apple-system, sans-serif;
   padding: 32px;
-  background: #111;
+  background: #1a1a1a;
   color: #ccc;
   min-height: 100vh;
   max-width: 720px;
@@ -67,12 +74,10 @@ input {
   color: #ccc;
   font-size: 14px;
 }
-
 input:focus {
   outline: none;
   border-color: #555;
 }
-
 button {
   padding: 8px 16px;
   border: 1px solid #333;
@@ -82,17 +87,14 @@ button {
   cursor: pointer;
   font-size: 13px;
 }
-
 button:hover {
   background: #252525;
   border-color: #444;
 }
-
 .actions {
   display: flex;
   gap: 6px;
 }
-
 p {
   color: #555;
   font-size: 14px;
@@ -105,4 +107,28 @@ p {
   color: white;
   font-size: 14px;
   text-align: center;
+}
+.hlavicka {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.logo {
+  display: block;
+  margin: 0 auto 24px;
+  margin-left: -325px;
+  margin-right: 1025px;
+  max-width: 200px;
+}
+.stops {
+  display: block;
+  margin: 0 auto 53px;
+  margin-left: 0px;
+  border: 1px solid #91F5AD;
+  background-color: #91F5AD;
+  padding: 6px 14px !important;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #0070BB;
+  font-weight: 600;
 }
