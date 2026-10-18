@@ -1,9 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 from .config import Config
 from .extensions import db
-from .routes import product_bp, team_bp
+from .routes import product_bp
 
 
 def create_app():
@@ -15,9 +16,7 @@ def create_app():
     CORS(app)
 
     app.register_blueprint(product_bp, url_prefix="/api/product")
-    app.register_blueprint(team_bp, url_prefix="/api/team")
 
-    with app.app_context():
-        db.create_all()
+    Migrate(app, db)
 
     return app

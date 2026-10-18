@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="src/index.css" />
-    <link rel="icon" href="Think-different-Academy_LOGO_erb.png">
+    <link rel="icon" href="src/imagesAndFonts/Think-different-Academy_LOGO_erb.png">
     <title>Think different Academy | MoP</title>
   </head>
   <body>
     <div class="hlavicka">
-      <img src="Think-different-Academy_LOGO_oficialni_1_dark-mode.png" id="logo" class="logo">
+      <img src="src/imagesAndFonts/Think-different-Academy_LOGO_oficialni_1_dark-mode.png" id="logo" class="logo">
       <a class="stops" href="stops.html">Stops</a>
     </div>
       <h1 id="headerText">Think different Academy - School buffet</h1>
@@ -29,26 +29,9 @@
 
     <div id="product-list"></div>
 
-    <div>
-      <label>
-        Team Name
-        <input id="input-team-name">
-      </label>
-      <label>
-        Team mates (write more names with double spaces)
-        <input id="input-teammates">
-      </label>
-      <button id="btn-addTeam">Add Team</button>
-    </div>
-
-    <button id="btn-load-teams">load teams</button>
-    <button id="btn-delete-teams">delete teams</button>
-    <div id="teams"></div>
-
     <script src="src/api.js"></script>
     <script src="src/ProductTable.js"></script>
     <script src="src/ProductForm.js"></script>
     <script src="src/App.js"></script>
-    <script src="src/teamSave.js"></script>
   </body>
 </html>

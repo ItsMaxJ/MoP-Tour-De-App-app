@@ -4,36 +4,9 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy import select, delete
 
 from .extensions import db
-from .models import Product, Team
+from .models import Product
 
 product_bp = Blueprint("products", __name__)
-team_bp = Blueprint("team", __name__)
-
-@team_bp.post("/create")
-def saveTeam():
-	data = request.get_json(silent=True)
-	name = data.get("teamName")
-	team = data.get("teammates")
-	if not isinstance(name, str) or not isinstance(team, list):
-		return jsonify("invalid input"), 400
-	
-	teamInfo = Team(teamName=name, teammates=team)
-	db.session.add(teamInfo)
-	db.session.commit()
-	
-	return jsonify(teamInfo.id), 201
-
-@team_bp.get("")
-def getTeam():
-	teams = db.session.scalars(select(Team).order_by(Team.id)).all()
-	return jsonify([team.to_dict() for team in teams]), 200
-
-@team_bp.delete("")
-def delTeams():
-  db.session.execute(delete(Team))
-  db.session.commit()
-  return jsonify("success"), 200
-
 
 class ProductData(TypedDict):
 	name: str
