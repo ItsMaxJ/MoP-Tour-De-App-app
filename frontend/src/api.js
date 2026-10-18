@@ -33,27 +33,3 @@ async function deleteProduct(id) {
   });
   return res.json();
 }
-
-async function createTeam(team_name, teamMates) {
-  const res = await fetch(`${API_URL}/team/create`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      teamName: team_name,
-      teammates: teamMates
-    })
-  });
-  return res.json();
-}
-
-async function getTeams() {
-  const res = await fetch(`${API_URL}/team`);
-  return res.json();
-}
-
-async function delTeams() {
-  const res = await fetch(`${API_URL}/team`, {
-    method: "DELETE",
-  });
-  return res;
-}
