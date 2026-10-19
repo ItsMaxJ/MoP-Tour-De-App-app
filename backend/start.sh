@@ -16,5 +16,5 @@ for _ in range(30):
 else:
     raise SystemExit(f'Database not reachable at {host}:{port}')
 "
-
+flask --app run:app db upgrade
 exec python run.py
