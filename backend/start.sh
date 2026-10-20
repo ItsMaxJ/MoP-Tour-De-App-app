@@ -17,4 +17,5 @@ else:
     raise SystemExit(f'Database not reachable at {host}:{port}')
 "
 flask --app run:app db upgrade
+flask --app run:app seed_stops
 exec python run.py

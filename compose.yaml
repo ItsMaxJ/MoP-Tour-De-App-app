@@ -17,7 +17,7 @@ services:
   server:
     image: python:3.12-slim
     working_dir: /app
-    command: sh -c "pip install -r requirements.txt && flask --app run:app run --debug --host 0.0.0.0 --port 3001"
+    command: sh -c "pip install -r requirements.txt && sh start.sh"
     volumes:
       - ./backend:/app
       - server-pip-cache:/root/.cache/pip

@@ -4,14 +4,20 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy import select, delete
 
 from .extensions import db
-from .models import Product
+from .models import Product, Stops
 
 product_bp = Blueprint("products", __name__)
+stops_bp = Blueprint("stops", __name__)
+
+@stops_bp.get("")
+def list_stops():
+    stops = db.session.scalars(select(Stops).order_by(Stops.id)).all()
+    print(stops)
+    return jsonify([stop.to_dict() for stop in stops]), 200
 
 class ProductData(TypedDict):
 	name: str
 	cost: int
-
 
 def extract_product() -> ProductData | None:
 	data: dict[str, Any] = request.get_json(silent=True) or {}  # pyright: ignore[reportExplicitAny]

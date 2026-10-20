@@ -4,7 +4,8 @@ from flask_migrate import Migrate
 
 from .config import Config
 from .extensions import db
-from .routes import product_bp
+from .routes import product_bp, stops_bp
+from .seed_stops import seedStops
 
 
 def create_app():
@@ -16,7 +17,12 @@ def create_app():
     CORS(app)
 
     app.register_blueprint(product_bp, url_prefix="/api/product")
+    app.register_blueprint(stops_bp, url_prefix="/api/stops")
 
     Migrate(app, db)
+
+    @app.cli.command("seed_stops")
+    def seed_stops_command():
+        seedStops()
 
     return app
