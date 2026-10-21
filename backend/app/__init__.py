@@ -17,7 +17,7 @@ def create_app():
     CORS(app)
 
     app.register_blueprint(product_bp, url_prefix="/api/product")
-    app.register_blueprint(stops_bp, url_prefix="/api/stops")
+    app.register_blueprint(stops_bp, url_prefix="/api/v1/stops")
 
     Migrate(app, db)
 

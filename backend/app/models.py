@@ -14,7 +14,7 @@ class Product(db.Model):
     def to_dict(self) -> dict[str, object]:
         return {"id": self.id, "name": self.name, "cost": self.cost}
 
-class Stops(db.Model):
+class Stop(db.Model):
     __tablename__: str = "stops"
     
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

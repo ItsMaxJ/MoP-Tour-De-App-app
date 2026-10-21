@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from .models import Stops
+from .models import Stop
 from .extensions import db
 
 def seedStops():
@@ -11,7 +11,7 @@ def seedStops():
         stops = []
         for row in rows:
             stops.append(
-                Stops(
+                Stop(
                     name = row["name"],
                     image_url = row["image_url"],
                     is_transfer = row["is_transfer"].lower() == "true",
@@ -24,6 +24,6 @@ def seedStops():
                     has_display = row["has_display"].lower() == "true"
                 )
             )
-    db.session.execute(db.delete(Stops))
+    db.session.execute(db.delete(Stop))
     db.session.add_all(stops)
     db.session.commit()
