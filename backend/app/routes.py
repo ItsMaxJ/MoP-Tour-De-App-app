@@ -27,20 +27,10 @@ def extract_stop() -> StopData | None:
         return None
     return {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"], "is_transfer": data["is_transfer"], "x": data["x"], "y": data["y"], "has_bench": data["has_bench"], "has_display": data["has_display"]}
 
-def return_stop_info(stop: Stop):
-    return {
-        "id": stop.id,
-        "name": stop.name,
-        "image_url": stop.image_url,
-        "wheelchair_accessible": stop.wheelchair_accessible,
-        "has_shelter": stop.has_shelter,
-        "has_ticket_machine": stop.has_ticket_machine,
-    }
-
 @stops_bp.get("")
 def list_stops():
     stops = db.session.scalars(select(Stop).order_by(Stop.id)).all()
-    return jsonify([return_stop_info(stop) for stop in stops]), 200
+    return jsonify([stop.to_dict() for stop in stops]), 200
 
 @stops_bp.get("/<int:stop_id>")
 def getStop(stop_id: int):
@@ -98,7 +88,7 @@ def createStop():
     db.session.add(stop)
     db.session.commit()
     
-    return return_stop_info(stop), 201
+    return stop.to_dict(), 201
 
 
 class ProductData(TypedDict):

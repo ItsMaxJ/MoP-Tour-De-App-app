@@ -1,39 +1,39 @@
-function renderStopsTable(container, stops) {
+function renderStopImages(container, stops) {
     if (stops.length === 0) {
-        container.innerHTML = "<p>No stops</p>";
+        container.innerHTML = "no stops";
         return;
     }
-    const table = document.createElement("table");
-
-    const headers = Object.keys(stops[0])
-    const headerRow = document.createElement("tr")
-
-    for (const header of headers) {
-        const th = document.createElement("th");
-        th.textContent = header;
-        headerRow.appendChild(th);
-    }
-    const thead = document.createElement("thead");
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    const tbody = document.createElement("tbody");
-
+    container.replaceChildren();
     for (const stop of stops) {
-        const row = document.createElement("tr");
-        for (const header of headers) {
-            const cell = document.createElement("td");
-            cell.textContent = stop[header];
-            row.appendChild(cell);
-        }
+        const a = document.createElement("a");
+        const img = document.createElement("img");
+        img.src = stop.image_url;
+        img.alt = stop.name
+        a.appendChild(img);
+        const name = document.createElement("p");
+        name.innerText = stop.name;
+        name.style.fontWeight = 700;
+        name.style.textAlign = "center";
+        name.style.marginTop = "4px";
+        name.style.marginBottom = "7px";
+        a.appendChild(name);
+        a.style.cursor = "pointer";
+        
+        a.addEventListener("click", async () => {
+            stopDetails.replaceChildren();
+            for (const [key, value] of Object.entries(stop)) {
+                const p = document.createElement("p");
+                p.innerText = `${key}: ${value}`;
+                stopDetails.appendChild(p);
+            }
+        });
 
-        tbody.appendChild(row);
+        container.appendChild(a);
     }
-    table.appendChild(tbody);
-    container.replaceChildren(table);
 }
 
+const stopDetails = document.getElementById("stop-details");
 const list = document.getElementById("stop-list");
 (async () => {
-    renderStopsTable(list, await getStops());
+    renderStopImages(list, await getStops());
 })();

@@ -39,3 +39,18 @@ body {
   font-weight: 600;
   box-shadow: 0 0px 12px #0070BB;
 }
+
+#stop-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#stop-list img {
+  display: block;
+  width: 100%;
+}
+
+#stop-list a {
+  display: block;
+}
