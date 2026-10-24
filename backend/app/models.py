@@ -19,7 +19,7 @@ class Stop(db.Model):
     
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    image_url: Mapped[str] = mapped_column(String(255), nullable=False)
+    image_url: Mapped[str] = mapped_column(String(255), nullable=True)
     is_transfer: Mapped[bool] = mapped_column()
     x: Mapped[int] = mapped_column()
     y: Mapped[int] = mapped_column()

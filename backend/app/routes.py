@@ -27,24 +27,33 @@ def extract_stop() -> StopData | None:
         return None
     return {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"], "is_transfer": data["is_transfer"], "x": data["x"], "y": data["y"], "has_bench": data["has_bench"], "has_display": data["has_display"]}
 
+def extractRequiredStop():
+    data: dict[str, Any] = request.get_json(silent=True) or {}
+    if data.get("name") is None or data.get("wheelchair_accessible") is None or data.get("has_shelter") is None or data.get("has_ticket_machine") is None:
+        return None
+    return {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"]}
+
+def required_stop_to_dict(stop):
+    return {"id": stop.id, "name": stop.name, "image_url": stop.image_url, "wheelchair_accessible":  stop.wheelchair_accessible, "has_shelter": stop.has_shelter, "has_ticket_machine": stop.has_ticket_machine}
+
 @stops_bp.get("")
 def list_stops():
     stops = db.session.scalars(select(Stop).order_by(Stop.id)).all()
-    return jsonify([stop.to_dict() for stop in stops]), 200
+    return jsonify([required_stop_to_dict(stop) for stop in stops]), 200
 
 @stops_bp.get("/<int:stop_id>")
 def getStop(stop_id: int):
     stop = db.session.get(Stop, stop_id)
     if stop is None:
         return jsonify({"message": "stop doesn't exist"}), 404
-    return jsonify(stop.to_dict()), 200
+    return jsonify(required_stop_to_dict(stop)), 200
 
 @stops_bp.put("/<int:stop_id>")
 def updateStop(stop_id: int):
     stop = db.session.get(Stop, stop_id)
     if stop is None:
         return jsonify({"message": "stop doesn't exist"}), 404
-    data = extract_stop()
+    data = extractRequiredStop()
     if data is None:
         return jsonify({"message": "Invalid stop data"}), 400
 
@@ -53,11 +62,11 @@ def updateStop(stop_id: int):
     stop.wheelchair_accessible = data["wheelchair_accessible"]
     stop.has_shelter = data["has_shelter"]
     stop.has_ticket_machine = data["has_ticket_machine"]
-    stop.is_transfer = data["is_transfer"]
-    stop.x = data["x"]
-    stop.y = data["y"]
+    # stop.is_transfer = data["is_transfer"]
+    # stop.x = data["x"]
+    # stop.y = data["y"]
     db.session.commit()
-    return jsonify(stop.to_dict()), 200
+    return jsonify(required_stop_to_dict(stop)), 200
 
 @stops_bp.delete("/<int:stop_id>")
 def deleteStop(stop_id: int):
@@ -66,11 +75,11 @@ def deleteStop(stop_id: int):
         return jsonify({"message": "stop doesn't exist"}), 404
     db.session.delete(stop)
     db.session.commit()
-    return jsonify(""), 204
+    return 204
 
 @stops_bp.post("")
 def createStop():
-    data = extract_stop()
+    data = extractRequiredStop()
     if data is None:
         return jsonify({"message": "Invalid stop data"}), 400
     stop = Stop()
@@ -79,16 +88,21 @@ def createStop():
     stop.wheelchair_accessible = data["wheelchair_accessible"]
     stop.has_shelter = data["has_shelter"]
     stop.has_ticket_machine = data["has_ticket_machine"]
-    stop.is_transfer = data["is_transfer"]
-    stop.x = data["x"]
-    stop.y = data["y"]
-    stop.has_bench = data["has_bench"]
-    stop.has_display = data["has_display"]
+    # stop.is_transfer = data["is_transfer"]
+    # stop.x = data["x"]
+    # stop.y = data["y"]
+    # stop.has_bench = data["has_bench"]
+    # stop.has_display = data["has_display"]
+    stop.is_transfer = False
+    stop.x = 0
+    stop.y = 0
+    stop.has_bench = False
+    stop.has_display = False
 
     db.session.add(stop)
     db.session.commit()
     
-    return stop.to_dict(), 201
+    return required_stop_to_dict(stop), 201
 
 
 class ProductData(TypedDict):
