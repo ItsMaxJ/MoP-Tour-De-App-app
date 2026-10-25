@@ -31,6 +31,8 @@ def extractRequiredStop():
     data: dict[str, Any] = request.get_json(silent=True) or {}
     if data.get("name") is None or data.get("wheelchair_accessible") is None or data.get("has_shelter") is None or data.get("has_ticket_machine") is None:
         return None
+    if data.get("image_url") == None:
+        data["image_url"] = None
     return {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"]}
 
 def required_stop_to_dict(stop):
