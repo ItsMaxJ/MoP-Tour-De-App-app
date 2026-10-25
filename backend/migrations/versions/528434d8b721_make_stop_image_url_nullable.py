@@ -34,13 +34,4 @@ def downgrade():
                existing_type=mysql.VARCHAR(length=255),
                nullable=False)
 
-    op.create_table('team',
-    sa.Column('id', mysql.INTEGER(), autoincrement=True, nullable=False),
-    sa.Column('teamName', mysql.VARCHAR(length=100), nullable=False),
-    sa.Column('teammates', mysql.JSON(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    mysql_collate='utf8mb4_0900_ai_ci',
-    mysql_default_charset='utf8mb4',
-    mysql_engine='InnoDB'
-    )
     # ### end Alembic commands ###
