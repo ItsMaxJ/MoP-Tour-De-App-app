@@ -75,7 +75,7 @@ def deleteStop(stop_id: int):
         return jsonify({"message": "stop doesn't exist"}), 404
     db.session.delete(stop)
     db.session.commit()
-    return 204
+    return "", 204
 
 @stops_bp.post("")
 def createStop():

@@ -1,4 +1,5 @@
-function renderStopImages(container, stops) {
+async function renderStopImages(container) {
+    stops = await getStops()
     if (stops.length === 0) {
         container.innerHTML = "no stops";
         return;
@@ -34,6 +35,4 @@ function renderStopImages(container, stops) {
 
 const stopDetails = document.getElementById("stop-details");
 const list = document.getElementById("stop-list");
-(async () => {
-    renderStopImages(list, await getStops());
-})();
+renderStopImages(list);
