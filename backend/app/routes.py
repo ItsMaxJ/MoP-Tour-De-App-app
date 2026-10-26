@@ -1,7 +1,8 @@
 from typing import Any, TypedDict
+from urllib.parse import urlsplit
 
 from flask import Blueprint, jsonify, request
-from sqlalchemy import select, delete
+from sqlalchemy import select
 
 from .extensions import db
 from .models import Product, Stop
@@ -27,13 +28,64 @@ def extract_stop() -> StopData | None:
         return None
     return {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"], "is_transfer": data["is_transfer"], "x": data["x"], "y": data["y"], "has_bench": data["has_bench"], "has_display": data["has_display"]}
 
+def is_valid_image_url(path: str) -> bool:
+    if path.startswith("src/imagesAndFonts/stopsImages/"):
+        if ["\\", "?", "#"] in path:
+            return False
+        parts = path.split("/")
+        filename = parts[-1].lower()
+        allowed_extensions = (".png", ".jpg", ".jpeg")
+        return (
+            all(part not in ("", ".", "..") for part in parts)
+            and filename.endswith(allowed_extensions)
+        )
+    try:
+        parsed = urlsplit(path)
+        return (
+            parsed.scheme in {"http", "https"}
+            and parsed.hostname is not None
+            and parsed.port != 0
+        )
+    except ValueError:
+        return False
+
 def extractRequiredStop():
     data: dict[str, Any] = request.get_json(silent=True) or {}
-    if data.get("name") is None or data.get("wheelchair_accessible") is None or data.get("has_shelter") is None or data.get("has_ticket_machine") is None:
-        return None
-    if data.get("image_url") == None:
-        data["image_url"] = None
-    return {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"]}
+    dataRequirements = {"name": {"type": str, "maxChars": 255, "required": True},
+                        "wheelchair_accessible": {"type": bool, "required": True},
+                        "has_shelter": {"type": bool, "required": True},
+                        "has_ticket_machine": {"type": bool, "required": True},
+                        "image_url": {"type": str, "maxChars": 255, "required": False, "other_musts": ["validURL"]},
+                        }
+    for name in data:
+        if name not in dataRequirements.keys():
+            return False, ("invalid input data", 400)
+    for info in dataRequirements:
+        if data.get(info) is None:
+            if dataRequirements[info]["required"] == False:
+                data[info] = None
+            else:
+                return False, ("invalid input data", 400)
+        else:
+            if isinstance(data[info], dataRequirements[info]["type"]):
+                if dataRequirements[info].get("maxChars") is None:
+                    pass
+                else:
+                    if len(data[info]) <= dataRequirements[info]["maxChars"]:
+                        pass
+                    else:
+                        return ("invalid input data", 400)
+                if dataRequirements[info].get("other_musts") is not None:
+                    for must in dataRequirements[info].get("other_musts"):
+                        if must == "validURL":
+                            if is_valid_image_url(data[info]):
+                                pass
+                            else:
+                                return False, ("invalid input data", 400)
+            else:
+                return False, ("invalid input data", 400)
+
+    return True, {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"]}
 
 def required_stop_to_dict(stop):
     return {"id": stop.id, "name": stop.name, "image_url": stop.image_url, "wheelchair_accessible":  stop.wheelchair_accessible, "has_shelter": stop.has_shelter, "has_ticket_machine": stop.has_ticket_machine}
@@ -55,9 +107,9 @@ def updateStop(stop_id: int):
     stop = db.session.get(Stop, stop_id)
     if stop is None:
         return jsonify({"message": "stop doesn't exist"}), 404
-    data = extractRequiredStop()
-    if data is None:
-        return jsonify({"message": "Invalid stop data"}), 400
+    state, data = extractRequiredStop()
+    if state is False:
+        return jsonify({"message": data[0]}), data[1]
 
     stop.name = data["name"]
     stop.image_url = data["image_url"]
@@ -81,9 +133,9 @@ def deleteStop(stop_id: int):
 
 @stops_bp.post("")
 def createStop():
-    data = extractRequiredStop()
-    if data is None:
-        return jsonify({"message": "Invalid stop data"}), 400
+    state, data = extractRequiredStop()
+    if state is False:
+        return jsonify({"message": data[0]}), data[1]
     stop = Stop()
     stop.name = data["name"]
     stop.image_url = data["image_url"]

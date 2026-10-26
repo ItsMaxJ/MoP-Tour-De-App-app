@@ -9,7 +9,7 @@ async function renderStopImages(container) {
         const a = document.createElement("a");
         const img = document.createElement("img");
         img.src = stop.image_url;
-        img.alt = stop.name
+        img.alt = "stop image";
         a.appendChild(img);
         const name = document.createElement("p");
         name.innerText = stop.name;
@@ -35,4 +35,14 @@ async function renderStopImages(container) {
 
 const stopDetails = document.getElementById("stop-details");
 const list = document.getElementById("stop-list");
+
+// (async function () {
+//     let stops = await getStops();
+//     let stop = stops[0];
+//     stop.image_url = "src/";
+//     delete stop.id;
+//     console.log(stop);
+//     console.log(await createStop(stop));
+// })();
+
 renderStopImages(list);
