@@ -22,15 +22,9 @@ class StopData(TypedDict):
     has_bench: bool
     has_display: bool
 
-def extract_stop() -> StopData | None:
-    data: dict[str, Any] = request.get_json(silent=True) or {}
-    if data.get("name") is None or data.get("image_url") is None or data.get("wheelchair_accessible") is None or data.get("has_shelter") is None or data.get("has_ticket_machine") is None or data.get("is_transfer") is None or data.get("x") is None or data.get("y") is None or data.get("has_bench") is None or data.get("has_display") is None:
-        return None
-    return {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"], "is_transfer": data["is_transfer"], "x": data["x"], "y": data["y"], "has_bench": data["has_bench"], "has_display": data["has_display"]}
-
 def is_valid_image_url(path: str) -> bool:
     if path.startswith("src/imagesAndFonts/stopsImages/"):
-        if ["\\", "?", "#"] in path:
+        if any(char in path for char in ("\\", "?", "#")):
             return False
         parts = path.split("/")
         filename = parts[-1].lower()
@@ -49,9 +43,18 @@ def is_valid_image_url(path: str) -> bool:
     except ValueError:
         return False
 
-def extractRequiredStop():
+def check_stop_id(id):
+    if isinstance(id, int) and not id < 1:
+        if db.session.get(Stop, id) == None:
+            return False, ["stop doesn't exist", 404]
+        else:
+            return True, None
+    else:
+        return False, ["invalid stop id", 400]
+
+def check_and_extract_stop():
     data: dict[str, Any] = request.get_json(silent=True) or {}
-    dataRequirements = {"name": {"type": str, "maxChars": 255, "required": True},
+    dataRequirements = {"name": {"type": str, "minChars": 1, "maxChars": 255, "required": True},
                         "wheelchair_accessible": {"type": bool, "required": True},
                         "has_shelter": {"type": bool, "required": True},
                         "has_ticket_machine": {"type": bool, "required": True},
@@ -68,46 +71,46 @@ def extractRequiredStop():
                 return False, ("invalid input data", 400)
         else:
             if isinstance(data[info], dataRequirements[info]["type"]):
-                if dataRequirements[info].get("maxChars") is None:
-                    pass
-                else:
+                if dataRequirements[info].get("maxChars") is not None:
                     if len(data[info]) <= dataRequirements[info]["maxChars"]:
-                        pass
+                        if dataRequirements[info].get("minChars") is not None:
+                            if not len(data[info]) >= dataRequirements[info]["minChars"]:
+                                return False, ("invalid input data", 400)
                     else:
-                        return ("invalid input data", 400)
+                        return False, ("invalid input data", 400)
                 if dataRequirements[info].get("other_musts") is not None:
                     for must in dataRequirements[info].get("other_musts"):
                         if must == "validURL":
-                            if is_valid_image_url(data[info]):
-                                pass
-                            else:
+                            if not is_valid_image_url(data[info]):
                                 return False, ("invalid input data", 400)
             else:
                 return False, ("invalid input data", 400)
 
     return True, {"name": data["name"], "image_url": data["image_url"], "wheelchair_accessible": data["wheelchair_accessible"], "has_shelter": data["has_shelter"], "has_ticket_machine": data["has_ticket_machine"]}
 
-def required_stop_to_dict(stop):
+def stop_to_dict(stop):
     return {"id": stop.id, "name": stop.name, "image_url": stop.image_url, "wheelchair_accessible":  stop.wheelchair_accessible, "has_shelter": stop.has_shelter, "has_ticket_machine": stop.has_ticket_machine}
 
 @stops_bp.get("")
 def list_stops():
     stops = db.session.scalars(select(Stop).order_by(Stop.id)).all()
-    return jsonify([required_stop_to_dict(stop) for stop in stops]), 200
+    return jsonify([stop_to_dict(stop) for stop in stops]), 200
 
-@stops_bp.get("/<int:stop_id>")
-def getStop(stop_id: int):
+@stops_bp.get("/<stop_id>")
+def getStop(stop_id):
+    state, data = check_stop_id(stop_id)
+    if state == False:
+        return jsonify({"message": data[0]}), data[1]
     stop = db.session.get(Stop, stop_id)
-    if stop is None:
-        return jsonify({"message": "stop doesn't exist"}), 404
-    return jsonify(required_stop_to_dict(stop)), 200
+    return jsonify(stop_to_dict(stop)), 200
 
-@stops_bp.put("/<int:stop_id>")
-def updateStop(stop_id: int):
+@stops_bp.put("/<stop_id>")
+def updateStop(stop_id):
+    state, data = check_stop_id(stop_id)
+    if state == False:
+        return jsonify({"message": data[0]}), data[1]
     stop = db.session.get(Stop, stop_id)
-    if stop is None:
-        return jsonify({"message": "stop doesn't exist"}), 404
-    state, data = extractRequiredStop()
+    state, data = check_and_extract_stop()
     if state is False:
         return jsonify({"message": data[0]}), data[1]
 
@@ -120,20 +123,21 @@ def updateStop(stop_id: int):
     # stop.x = data["x"]
     # stop.y = data["y"]
     db.session.commit()
-    return jsonify(required_stop_to_dict(stop)), 200
+    return jsonify(stop_to_dict(stop)), 200
 
-@stops_bp.delete("/<int:stop_id>")
-def deleteStop(stop_id: int):
+@stops_bp.delete("/<stop_id>")
+def deleteStop(stop_id):
+    state, message = check_stop_id(stop_id)
+    if state == False:
+        return jsonify({"message": message[0]}), message[1]
     stop = db.session.get(Stop, stop_id)
-    if stop is None:
-        return jsonify({"message": "stop doesn't exist"}), 404
     db.session.delete(stop)
     db.session.commit()
     return "", 204
 
 @stops_bp.post("")
 def createStop():
-    state, data = extractRequiredStop()
+    state, data = check_and_extract_stop()
     if state is False:
         return jsonify({"message": data[0]}), data[1]
     stop = Stop()
@@ -156,7 +160,7 @@ def createStop():
     db.session.add(stop)
     db.session.commit()
     
-    return required_stop_to_dict(stop), 201
+    return stop_to_dict(stop), 201
 
 
 class ProductData(TypedDict):
