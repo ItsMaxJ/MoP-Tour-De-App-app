@@ -23,7 +23,7 @@ class StopData(TypedDict):
     has_display: bool
 
 def is_valid_image_url(path: str) -> bool:
-    if path.startswith("src/imagesAndFonts/stopsImages/"):
+    if path.startswith("src/images/stopsImages/"):
         if any(char in path for char in ("\\", "?", "#")):
             return False
         parts = path.split("/")
@@ -43,14 +43,16 @@ def is_valid_image_url(path: str) -> bool:
     except ValueError:
         return False
 
-def check_stop_id(id):
-    if isinstance(id, int) and not id < 1:
-        if db.session.get(Stop, id) == None:
-            return False, ["stop doesn't exist", 404]
-        else:
-            return True, None
-    else:
+def check_stop_id(rawId):
+    try:
+        id = int(rawId)
+    except:
         return False, ["invalid stop id", 400]
+    if id < 1:
+        return False, ["invalid stop id", 400]
+    if db.session.get(Stop, id) is None:
+        return False, ["stop doesn't exist", 404]
+    return True, id
 
 def check_and_extract_stop():
     data: dict[str, Any] = request.get_json(silent=True) or {}
@@ -101,7 +103,7 @@ def getStop(stop_id):
     state, data = check_stop_id(stop_id)
     if state == False:
         return jsonify({"message": data[0]}), data[1]
-    stop = db.session.get(Stop, stop_id)
+    stop = db.session.get(Stop, data)
     return jsonify(stop_to_dict(stop)), 200
 
 @stops_bp.put("/<stop_id>")
@@ -109,7 +111,7 @@ def updateStop(stop_id):
     state, data = check_stop_id(stop_id)
     if state == False:
         return jsonify({"message": data[0]}), data[1]
-    stop = db.session.get(Stop, stop_id)
+    stop = db.session.get(Stop, data)
     state, data = check_and_extract_stop()
     if state is False:
         return jsonify({"message": data[0]}), data[1]
@@ -127,10 +129,10 @@ def updateStop(stop_id):
 
 @stops_bp.delete("/<stop_id>")
 def deleteStop(stop_id):
-    state, message = check_stop_id(stop_id)
+    state, data = check_stop_id(stop_id)
     if state == False:
-        return jsonify({"message": message[0]}), message[1]
-    stop = db.session.get(Stop, stop_id)
+        return jsonify({"message": data[0]}), data[1]
+    stop = db.session.get(Stop, data)
     db.session.delete(stop)
     db.session.commit()
     return "", 204

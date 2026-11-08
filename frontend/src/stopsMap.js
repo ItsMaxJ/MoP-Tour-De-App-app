@@ -40,6 +40,7 @@ const list = document.getElementById("stop-list");
 //     let stops = await getStops();
 //     let stop = stops[0];
 //     stop.image_url = "src/";
+//     stop.name = "";
 //     delete stop.id;
 //     console.log(stop);
 //     console.log(await createStop(stop));
