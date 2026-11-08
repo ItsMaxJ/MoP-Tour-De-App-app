@@ -102,7 +102,7 @@ def list_stops():
 def getStop(stop_id):
     state, data = check_stop_id(stop_id)
     if state == False:
-        return jsonify({"message": data[0]}), data[1]
+        return jsonify({"error": data[0]}), data[1]
     stop = db.session.get(Stop, data)
     return jsonify(stop_to_dict(stop)), 200
 
@@ -110,11 +110,11 @@ def getStop(stop_id):
 def updateStop(stop_id):
     state, data = check_stop_id(stop_id)
     if state == False:
-        return jsonify({"message": data[0]}), data[1]
+        return jsonify({"error": data[0]}), data[1]
     stop = db.session.get(Stop, data)
     state, data = check_and_extract_stop()
     if state is False:
-        return jsonify({"message": data[0]}), data[1]
+        return jsonify({"error": data[0]}), data[1]
 
     stop.name = data["name"]
     stop.image_url = data["image_url"]
@@ -131,7 +131,7 @@ def updateStop(stop_id):
 def deleteStop(stop_id):
     state, data = check_stop_id(stop_id)
     if state == False:
-        return jsonify({"message": data[0]}), data[1]
+        return jsonify({"error": data[0]}), data[1]
     stop = db.session.get(Stop, data)
     db.session.delete(stop)
     db.session.commit()
@@ -141,7 +141,7 @@ def deleteStop(stop_id):
 def createStop():
     state, data = check_and_extract_stop()
     if state is False:
-        return jsonify({"message": data[0]}), data[1]
+        return jsonify({"error": data[0]}), data[1]
     stop = Stop()
     stop.name = data["name"]
     stop.image_url = data["image_url"]
