@@ -1,11 +1,15 @@
-async function renderStopImages(container) {
-    stops = await getStops()
-    if (stops.length === 0) {
-        container.innerHTML = "no stops";
+function renderStopImages(container, stops, query = "") {
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    const matchingStops = stops.filter(stop =>
+        stop.name.toLocaleLowerCase().includes(normalizedQuery)
+    );
+
+    container.replaceChildren();
+    if (matchingStops.length === 0) {
+        container.textContent = normalizedQuery ? "No stops found" : "No stops";
         return;
     }
-    container.replaceChildren();
-    for (const stop of stops) {
+    for (const stop of matchingStops) {
         const a = document.createElement("a");
         const img = document.createElement("img");
         img.src = stop.image_url;
@@ -35,6 +39,7 @@ async function renderStopImages(container) {
 
 const stopDetails = document.getElementById("stop-details");
 const list = document.getElementById("stop-list");
+const searchInput = document.getElementById("stop-search");
 
 // (async function () {
 //     let stops = await getStops();
@@ -46,4 +51,12 @@ const list = document.getElementById("stop-list");
 //     console.log(await createStop(stop));
 // })();
 
-renderStopImages(list);
+async function initializeStops() {
+    const stops = await getStops();
+    renderStopImages(list, stops);
+    searchInput.addEventListener("input", () => {
+        renderStopImages(list, stops, searchInput.value);
+    });
+}
+
+initializeStops();

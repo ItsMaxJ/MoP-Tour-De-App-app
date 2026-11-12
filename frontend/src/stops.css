@@ -40,6 +40,29 @@ body {
   box-shadow: 0 0px 12px #0070BB;
 }
 
+.search-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+#stop-search {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  background: #252525;
+  color: #eee;
+  font: inherit;
+}
+
+#stop-search:focus {
+  outline: 2px solid #91F5AD;
+  outline-offset: 2px;
+}
+
 #stop-list {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
