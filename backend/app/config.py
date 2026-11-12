@@ -8,6 +8,7 @@ class Config:
     FLASK_DB_NAME: str = os.getenv("FLASK_DB_NAME", "product")
     FLASK_DB_USER: str = os.getenv("FLASK_DB_USER", "root")
     FLASK_DB_PASSWORD: str = os.getenv("FLASK_DB_PASSWORD", "")
+    ADMIN_API_KEY: str = os.getenv("ADMIN_API_KEY", "")
 
     SQLALCHEMY_DATABASE_URI: str = (
         f"mysql+pymysql://{FLASK_DB_USER}:{quote_plus(FLASK_DB_PASSWORD)}"

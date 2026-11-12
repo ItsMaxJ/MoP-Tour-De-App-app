@@ -10,6 +10,9 @@ from .models import Product, Stop
 product_bp = Blueprint("products", __name__)
 stops_bp = Blueprint("stops", __name__)
 
+import hmac
+from flask import current_app
+
 class StopData(TypedDict):
     name: str
     image_url: str
@@ -93,6 +96,23 @@ def check_and_extract_stop():
 def stop_to_dict(stop):
     return {"id": stop.id, "name": stop.name, "image_url": stop.image_url, "wheelchair_accessible":  stop.wheelchair_accessible, "has_shelter": stop.has_shelter, "has_ticket_machine": stop.has_ticket_machine}
 
+
+@stops_bp.before_request
+def requireAdminKey():
+    if request.method not in ["PUT", "DELETE", "POST"]:
+        return None
+    scheme, separator, token = request.headers.get("Authorization", "").partition(" ")
+    admin_key = current_app.config.get("ADMIN_API_KEY", "")
+    if (
+        scheme.lower() != "bearer"
+        or not separator
+        or not admin_key
+        or not hmac.compare_digest(token, admin_key)
+    ):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    return None
+    
 @stops_bp.get("")
 def list_stops():
     stops = db.session.scalars(select(Stop).order_by(Stop.id)).all()
