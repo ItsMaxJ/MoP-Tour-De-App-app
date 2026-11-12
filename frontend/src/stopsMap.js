@@ -26,11 +26,20 @@ function renderStopImages(container, stops, query = "") {
         
         a.addEventListener("click", async () => {
             stopDetails.replaceChildren();
+            stopDetails.style.display = "flex";stopDetails.style.gap = "5px";stopDetails.style.alignItems = "flex-start";
+            const img = document.createElement("img");
+            img.src = stop.image_url;
+            img.style.width = "50%";
+            img.style.objectFit = "cover";
+            stopDetails.appendChild(img);
+            const textContainer = document.createElement("div");
+            textContainer.style.flex = "1";
             for (const [key, value] of Object.entries(stop)) {
                 const p = document.createElement("p");
                 p.innerText = `${key}: ${value}`;
-                stopDetails.appendChild(p);
+                textContainer.appendChild(p);
             }
+            stopDetails.appendChild(textContainer);
         });
 
         container.appendChild(a);
@@ -40,16 +49,6 @@ function renderStopImages(container, stops, query = "") {
 const stopDetails = document.getElementById("stop-details");
 const list = document.getElementById("stop-list");
 const searchInput = document.getElementById("stop-search");
-
-// (async function () {
-//     let stops = await getStops();
-//     let stop = stops[0];
-//     stop.image_url = "src/";
-//     stop.name = "";
-//     delete stop.id;
-//     console.log(stop);
-//     console.log(await createStop(stop));
-// })();
 
 async function initializeStops() {
     const stops = await getStops();
