@@ -25,30 +25,39 @@ function renderStopImages(container, stops, query = "") {
         a.style.cursor = "pointer";
         
         a.addEventListener("click", async () => {
-            stopDetails.replaceChildren();
-            stopDetails.style.display = "flex";stopDetails.style.gap = "5px";stopDetails.style.alignItems = "flex-start";
-            const img = document.createElement("img");
-            img.src = stop.image_url;
-            img.style.width = "50%";
-            img.style.objectFit = "cover";
-            stopDetails.appendChild(img);
-            const textContainer = document.createElement("div");
-            textContainer.style.flex = "1";
-            for (const [key, value] of Object.entries(stop)) {
-                const p = document.createElement("p");
-                p.innerText = `${key}: ${value}`;
-                textContainer.appendChild(p);
-            }
-            stopDetails.appendChild(textContainer);
+            const url = new URL(window.location.href);
+            url.searchParams.set("id", stop.id);
+            history.pushState({}, "", url);
+            window.location.reload();
         });
 
         container.appendChild(a);
     }
 }
 
+async function loadStop(id) {
+    const stop = await getStop(id);
+    stopDetails.replaceChildren();
+    stopDetails.style.display = "flex";stopDetails.style.gap = "5px";stopDetails.style.alignItems = "flex-start";
+    const img = document.createElement("img");
+    img.src = stop.image_url;
+    img.style.width = "50%";
+    img.style.objectFit = "cover";
+    stopDetails.appendChild(img);
+    const textContainer = document.createElement("div");
+    textContainer.style.flex = "1";
+    for (const [key, value] of Object.entries(stop)) {
+        const p = document.createElement("p");
+        p.innerText = `${key}: ${value}`;
+        textContainer.appendChild(p);
+    }
+    stopDetails.appendChild(textContainer);
+}
+
 const stopDetails = document.getElementById("stop-details");
 const list = document.getElementById("stop-list");
 const searchInput = document.getElementById("stop-search");
+const stopsListView = document.getElementById("stops-list-view");
 
 async function initializeStops() {
     const stops = await getStops();
@@ -58,4 +67,12 @@ async function initializeStops() {
     });
 }
 
-initializeStops();
+const params = new URLSearchParams(window.location.search);const stopId = Number(params.get("id"));
+if (stopId) {
+    stopsListView.hidden = true;
+    loadStop(stopId);
+}
+else {
+    stopsListView.hidden = false;
+    initializeStops();
+}
